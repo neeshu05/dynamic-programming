@@ -1,0 +1,47 @@
+Given an integer. Find how many structurally unique binary search trees are there that stores the values from 1 to that integer (inclusive). 
+
+Example 1:
+
+Input:
+N = 2
+Output: 2
+Explanation:for N = 2, there are 2 unique
+BSTs
+     1               2  
+      \            /
+       2         1
+
+
+
+
+class Solution:
+    #Function to return the total number of possible unique BST.
+    
+    """
+    1. Count the number of expressions containing n pairs of parentheses which are correctly matched. 
+    For n = 3, possible expressions are ((())), ()(()), ()()(), (())(), (()()).
+    2. Count the number of possible Binary Search Trees with n keys (See this)
+    3. Count the number of full binary trees (A rooted binary tree is full if every 
+    vertex has either two children or no children) with n+1 leaves.
+    4. Given a number n, return the number of ways you can draw n chords in a circle 
+    with 2 x n points such that no 2 chords intersect
+    
+    """
+    
+    def catlan(self,n):
+        if (n == 0 or n == 1):
+            return 1
+        
+        catalan =[0]*(n+1)
+        
+        catalan[0] = 1
+        catalan[1] = 1
+        
+        for i in range(2, n + 1):
+            for j in range(i):
+                catalan[i] += catalan[j]* catalan[i-j-1]
+     
+        return catalan[n]
+        
+    def numTrees(self,N):
+        return self.catlan(N)%1000000007
