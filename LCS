@@ -1,0 +1,53 @@
+Given two sequences, find the length of longest subsequence present in both of them. Both the strings are of uppercase.
+
+Example 1:
+
+Input:
+A = 6, B = 6
+str1 = ABCDGH
+str2 = AEDFHR
+Output: 3
+Explanation: LCS for input Sequences
+“ABCDGH” and “AEDFHR” is “ADH” of
+length 3.
+
+
+
+def is_Subsequences(target,word):
+  if len(target) > len(word):
+    return False
+  m = len(target)
+  n = len(word)
+  i = 0
+  j = 0
+  while i < m and j < n:
+      if target[i] == word[j]:
+          i += 1
+          j += 1
+      else:
+        j += 1
+  #checking if target is completed or not
+  return i == m
+
+#tabulation
+dp = [[0 for i in range(y+1)]for j in range(x+1)]
+for i in range(1,x+1):
+    for j in range(1,y+1):
+        dp[i][j] = max(dp[i-1][j],dp[i][j-1])
+        if s1[i-1] == s2[j-1]:
+            dp[i][j] = 1 + dp[i-1][j-1]
+return dp[x][y]
+
+#memoization        
+memo = {}
+def helper(indx1,indx2):
+  if (indx1,indx2) in memo:
+      return memo[(indx1,indx2)]
+  if indx1 == x or indx2 == y:
+      return 0
+  if s1[indx1] == s2[indx2]:
+      memo[(indx1,indx2)] = 1 + helper(indx1+1,indx2+1)
+      return memo[(indx1,indx2)]
+  memo[(indx1,indx2)] = max(helper(indx1 + 1,indx2), helper(indx1,indx2 + 1))
+  return memo[(indx1,indx2)]
+return helper(0,0)
