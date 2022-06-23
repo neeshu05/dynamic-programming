@@ -1,0 +1,56 @@
+Given a value V and array coins[] of size M, the task is to make the change for V cents,
+given that you have an infinite supply of each of coins{coins1, coins2, ..., coinsm} valued coins. 
+Find the minimum number of coins to make the change. If not possible to make change then return -1.
+
+
+Example 1:
+
+Input: V = 30, M = 3, coins[] = {25, 10, 5}
+Output: 2
+Explanation: Use one 25 cent coin
+and one 5 cent coin
+
+Example 2:
+Input: V = 11, M = 4,coins[] = {9, 6, 5, 1} 
+Output: 2 
+Explanation: Use one 6 cent coin
+and one 5 cent coin
+
+
+class Solution:
+	def minCoins(self, coins, M, V):
+	    dp = [[0 for i in range(V+1)] for j in range(M+1)]
+	    #initilizing the dp array
+	    for i in range(M+1):
+	        for j in range(V+1):
+              #value == 0 then i cannnot pick any coin
+	            if j == 0:
+	                dp[i][j] = 0
+              #if i have no coins then i cannot form the value
+	            elif i == 0:
+	                dp[i][j] = float('inf')
+	    #traversing the coins and checking for the amount
+	    for i in range(1,M+1):
+	        for j in range(1,V+1):
+	            #you have both options of pick and notpick
+	            if coins[i-1] <= j:
+	                dp[i][j] = min(1+dp[i][j - coins[i-1]],dp[i-1][j])
+	            else:
+	                #only option of notpick
+	                dp[i][j] = dp[i-1][j]
+	    return dp[M][V] if dp[M][V] != float('inf') else -1
+	  
+    #memoization
+    memo = {}
+		def helper(indx,amount):
+		    if (indx,amount) in memo:
+		        return memo[(indx,amount)]
+		    if amount < 0 or indx < 0:
+		        return float('inf')
+		    if amount == 0:
+		        return 0
+	        notpick = helper(indx - 1,amount)
+	        pick = 1 + helper(indx,amount - coins[indx])
+	        memo[(indx,amount)] = min(pick,notpick)
+	        return memo[(indx,amount)]
+	    return helper(len(coins)-1,V) if helper(len(coins)-1,V) != float('inf') else -1
