@@ -1,0 +1,91 @@
+Given two strings 'str' and a wildcard pattern 'pattern' of length N and M respectively,  
+You have to print '1' if the wildcard pattern is matched with str else print '0' .
+
+The wildcard pattern can include the characters ‘?’ and ‘*’
+‘?’ – matches any single character
+‘*’ – Matches any sequence of characters (including the empty sequence)
+
+Note: The matching should cover the entire str (not partial str).
+
+ 
+
+Example 1:
+
+Input:
+pattern = "ba*a?"
+str = "baaabab"
+Output: 1
+Explanation: replace '*' with "aab" and 
+'?' with 'b'
+
+
+
+class Solution:
+    def wildCard(self,pattern, string):
+        
+        #tabulation
+        dp = [[False for _ in range(len(pattern) + 1)] for _ in range(len(string) + 1)]
+        dp[0][0] = True
+        
+        for i in range(1,len(string) + 1):
+            dp[i][0] = False
+        
+        for j in range(1,len(pattern)+ 1):
+            if pattern[j-1] != '*':
+                dp[0][j] = False
+            else:
+                dp[0][j] = dp[0][j-1]
+        
+        
+        for i in range(1,len(string) + 1):
+            for j in range(1,len(pattern)+1):
+                
+                if pattern[j-1] == string[i-1] or pattern[j-1] == '?':
+                    dp[i][j] = dp[i - 1][j - 1]
+                
+                elif pattern[j-1] == '*':
+                    take = dp[i][j-1]
+                    nottake = dp[i- 1][j]
+                    dp[i][j] = take or nottake
+                    
+                
+        return dp[len(string)][len(pattern)]
+        
+        
+        #memoization
+        
+        dp = [[-1 for _ in range(len(string)+1)] for _ in range(len(pattern)+1)]
+        
+        def helper(indx1,indx2):
+            
+            if indx1 < 0 and indx2 < 0:
+                return 1
+            # a*ab
+            # caeacvecacgab
+            #since we encounter a after '*' so we will return False 
+            if indx2 < 0:
+                while indx1 >= 0:
+                    if pattern[indx1] != '*':
+                        return 0
+                    indx1 -= 1
+                return 1
+            #we have reach to the end of pattern and we still have string left 
+            #so we could not completely match the string and the pattern
+            if indx1 < 0:
+                return 0
+            
+            if dp[indx1][indx2] != -1:
+                return dp[indx1][indx2]
+                
+            if pattern[indx1] == string[indx2] or pattern[indx1] == '?':
+                dp[indx1][indx2] = helper(indx1 - 1,indx2 - 1)
+                
+            elif pattern[indx1] == '*':
+                take = helper(indx1,indx2-1)
+                nottake = helper(indx1 - 1,indx2)
+                dp[indx1][indx2] = take or nottake
+            
+            return dp[indx1][indx2]
+        
+        return helper(len(pattern)-1,len(string)-1)
+        
