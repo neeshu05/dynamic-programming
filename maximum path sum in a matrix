@@ -1,0 +1,37 @@
+Given a NxN matrix of positive integers. There are only three possible moves from a cell Matrix[r][c].
+
+Matrix [r+1] [c]
+Matrix [r+1] [c-1]
+Matrix [r+1] [c+1]
+Starting from any column in row 0 return the largest sum of any of the paths up to row N-1.
+
+Example 1:
+
+Input: N = 2
+Matrix = {{348, 391},
+          {618, 193}}
+Output: 1009
+Explaination: The best path is 391 -> 618. 
+It gives the sum = 1009.
+
+
+class Solution:
+    def maximumPath(self, N, Matrix):
+        memo = {}
+        def helper(r,c):
+            #memoization
+            if (r,c) in memo:
+                return memo[(r,c)]
+            #out of bound cases
+            if r<0 or c<0 or r>=N or c>=N:
+                return 0
+            #base case
+            if r == N-1:
+                return Matrix[r][c]
+            #ans
+            memo[(r,c)] = Matrix[r][c] + max(helper(r+1,c),helper(r+1,c-1),helper(r+1,c+1))
+            return memo[(r,c)]
+        ans = float('-inf')
+        for i in range(N):
+            ans = max(ans,helper(0,i))
+        return an
