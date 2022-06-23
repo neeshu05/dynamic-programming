@@ -1,0 +1,40 @@
+Given an array of n positive integers. Find the sum of the maximum sum subsequence of the given array such that the integers in the 
+subsequence are sorted in increasing order i.e. increasing subsequence. 
+
+Example 1:
+
+Input: N = 5, arr[] = {1, 101, 2, 3, 100} 
+Output: 106
+Explanation:The maximum sum of a
+increasing sequence is obtained from
+{1, 2, 3, 100}
+
+
+from bisect import bisect_left
+class Solution:
+	def maxSumIS(self, arr, n):
+		dp=[1]*n
+		dp[0]=arr[0]
+		for i in range(n):
+		    for j in range(i):
+		        if arr[i]>arr[j]:
+		            dp[i]=max(dp[j]+arr[i],dp[i])
+		        else:
+		            dp[i]=max(dp[i],arr[i])
+		return max(dp)
+		
+		
+		
+		memo = {}
+    def helper(indx,prev):
+        if (indx,prev) in memo:
+            return memo[(indx,prev)]
+        if indx == n:
+            return 0
+        nottake = helper(indx+1,prev)
+        take = 0
+        if prev == -1 or arr[indx] > arr[prev]:
+            take = arr[indx] + helper(indx + 1,indx)
+        memo[(indx,prev)] = max(take,nottake)
+        return memo[(indx,prev)]
+    return helper(0,-1)
