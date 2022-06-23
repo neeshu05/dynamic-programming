@@ -1,0 +1,77 @@
+Given a string str, find the length of the longest repeating subsequence such that it can be found twice in the given string. 
+The two identified subsequences A and B can use the same ith character from string str if and only if that ith character has different indices in A and B.
+
+Example 1:
+
+Input:
+str = "axxzxy"
+Output: 2
+Explanation:
+The given array with indexes looks like
+a x x z x y 
+0 1 2 3 4 5
+
+The longest subsequence is "xx". 
+It appears twice as explained below.
+
+subsequence A
+x x
+0 1  <-- index of subsequence A
+------
+1 2  <-- index of str 
+
+
+subsequence B
+x x
+0 1  <-- index of subsequence B
+------
+2 4  <-- index of str 
+
+We are able to use character 'x' 
+(at index 2 in str) in both subsequences
+as it appears on index 1 in subsequence A 
+and index 0 in subsequence B.
+
+
+
+
+class Solution:
+	def LongestRepeatingSubsequence(self, str):
+		# Code here4
+		"""
+		str = axxzxy
+		      axxzxy
+		      #mapping
+		      a✔✔zxy
+		      ax✔z✔x
+		      
+		    subsequence = xx
+        same character must be at different index for a subsequence
+    """
+        memo = {}
+        def helper(indx1,indx2):
+            if (indx1,indx2) in memo:
+                return memo[(indx1,indx2)]
+            if indx1 == len(str) or indx2 == len(str):
+                return 0
+            if indx1 != indx2 and str[indx1] == str[indx2]:
+                return 1 + helper(indx1+1,indx2+1)
+            else:
+                memo[(indx1,indx2)] = max(helper(indx1+1,indx2),helper(indx1,indx2 + 1))
+            return memo[(indx1,indx2)]
+        return helper(0,0)
+        
+        
+     #tabulation   
+		n = len(str)
+		dp = [[0 for i in range(n+1)] for i in range(n+1)]
+		
+		#if str == "" so dp[i][j] where either i == 0 or j == 0 return 0
+		
+		for i in range(1,n+1):
+		    for j in range(1,n+1):
+		        if str[i-1] == str[j-1] and i != j:
+		            dp[i][j] = 1 + dp[i-1][j-1]
+		        else:
+		            dp[i][j] = max(dp[i-1][j],dp[i][j-1])
+		return dp[n][n]
