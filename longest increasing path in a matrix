@@ -1,0 +1,78 @@
+Given a matrix with n rows and m columns. Your task is to find the length of the longest increasing path in matrix, 
+here increasing path means that the value in the specified path increases. For example if a path of length k 
+has values a1, a2, a3, .... ak  , then for every i from [2,k] this condition must hold ai > ai-1.  No cell should be revisited in the path.
+From each cell, you can either move in four directions: left, right, up, or down. You are not allowed to move diagonally or move outside the boundary.
+
+
+Example 1:
+
+Input:
+n = 3, m = 3
+matrix[][] = {{1 2 3},
+              {4 5 6},
+              {7 8 9}}
+Output: 
+5
+Explanation: 
+The longest increasing path is 
+{1, 2, 3, 6, 9}.
+
+
+#c++
+
+
+class Solution {
+  public:
+    int dp[1001][1001];   
+    int dfs(int i , int j, vector<vector<int>> & matrix, int curr_val) {
+        if(i < 0 || j < 0 || i >= matrix.size() || j >= matrix[0].size() || curr_val >= matrix[i][j]) {
+            return 0; 
+        }
+        if(dp[i][j] != -1) {
+            return dp[i][j]; 
+        }
+        int temp = matrix[i][j]; 
+        int one = 1 + dfs(i+1, j, matrix, temp); 
+        int two = 1 + dfs(i, j+1, matrix, temp);  
+        int three = 1 + dfs(i-1, j, matrix, temp); 
+        int four = 1 + dfs(i,j-1, matrix, temp);  
+        return dp[i][j] = max({one, two, three, four}); 
+    }
+  
+    int longestIncreasingPath(vector<vector<int>>& matrix, int n, int m) {  
+        int length = 0; 
+        memset(dp, -1, sizeof(dp));  
+        for(int i = 0; i < n; ++i) {
+            for(int j = 0; j < m; ++j) {
+                int curr = INT_MIN; 
+                int temp = dfs(i,j,matrix,curr); 
+                length = max(length, temp);  
+            }
+        }
+        return length;  
+    }
+        
+};
+
+
+
+#tle 
+def longestIncreasingPath(self,matrix, n, m):
+    memo = {}
+    def dfs(r,c,prev):
+        if r<0 or c<0 or r >= len(matrix) or c >= len(matrix[0]) or matrix[r][c] <= prev:
+            return 0
+        if (r,c) in memo:
+            return memo[(r,c)]
+        res = 1
+        res = max(res,1+ dfs(r,c+1,matrix[r][c]))
+        res = max(res, 1+ dfs(r+1,c,matrix[r][c]))
+        res = max(res,1  +dfs(r-1,c,matrix[r][c]))
+        res = max(res, 1 + dfs(r,c-1,matrix[r][c]))
+        memo[(r,c)] = res
+        return memo[(r,c)]
+    ans = float('-inf')
+    for i in range(len(matrix)):
+        for j in range(len(matrix[0])):
+             ans = max(ans,dfs(i,j,-1))
+    return ans
