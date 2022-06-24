@@ -1,0 +1,28 @@
+Given a floor of size n x m and tiles of size 1 x m. The problem is to count the number of ways to tile the given floor using 1 x m tiles.
+A tile can either be placed horizontally or vertically.
+Both n and m are positive integers and 2 < = m.
+ 
+Example 1 :
+
+Input: n = 2, m = 3
+Output: 1
+Expanation: There is only one way to tile the
+given floor.
+
+
+class Solution:
+	def countWays(self, n, m):
+	    if m > n:
+	        return 1
+	    if n == m:
+	        return 2
+	    dp = [0]*(n+1)
+	    for i in range(1,n+1):
+	        if i < m:
+	            dp[i] = 1
+	        elif i == m:
+	            dp[i] = 2
+	        else:
+	            #algorithm
+	            dp[i] = dp[i-m] + dp[i-1]
+	    return dp[n]%1000000007
