@@ -1,0 +1,49 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class Solution {
+public:
+    int dp[11][2][99][11]; //dp[pos][tight][sum][count]
+    int solve(vector<int> &arr, int pos, bool tight, int sum, int count){
+        if(pos==(signed)arr.size()) return count;
+        if(dp[pos][tight][sum][count]!=-1) return dp[pos][tight][sum][count];
+        
+        int cur=0;
+        //till that index number
+        if(tight){ 
+            for(int i=0;i<=arr[pos];++i){
+                if(sum==0 and i==0) cur+=solve(arr,pos+1,false,sum+i, count); //leading zero
+                else if(i==arr[pos]){ //last(tight) number
+                    if(i==1) cur+=solve(arr,pos+1,true,sum+i,count+1);
+                    else cur+=solve(arr,pos+1,true,sum+i,count);
+                }else{
+                    if(i==1) cur+=solve(arr,pos+1,false,sum+i,count+1);
+                    else cur+=solve(arr,pos+1,false,sum+i,count);
+                } 
+            }
+        }else{
+            for(int i=0;i<=9;++i){
+                if(sum==0 and i==0) cur+=solve(arr,pos+1,false,sum+i,count); //leading zero
+                else{
+                    if(i==1) cur+=solve(arr,pos+1,false,sum+i,count+1);
+                    else cur+=solve(arr,pos+1,false,sum+i,count);
+                }
+            }
+        }
+        
+        return dp[pos][tight][sum][count]=cur;
+    }
+    
+    int countDigitOne(int b) {
+        
+        vector<int> arr;
+        int x=b;
+        while(x){
+            arr.push_back(x%10);
+            x/=10;
+        }
+        reverse(arr.begin(),arr.end());
+        memset(dp,-1,sizeof(dp));
+        return solve(arr,0,true,0,0);
+    }  
+};
